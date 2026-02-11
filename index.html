@@ -850,11 +850,15 @@ async function openDetail(item) {
     addField(prodFields, 'Hardware Types', item['Hardware Types']);
     addField(prodFields, 'Materials', item['Materials']);
     addField(prodFields, 'Product Description', item['Product Description']);
-    if (prodFields.length) html += renderSection('Products', prodFields);
     const bizFields = [];
     addField(bizFields, 'MOQ Info', item['MOQ Info']);
     addField(bizFields, 'Custom Work', item['Custom Work']);
-    if (bizFields.length) html += renderSection('Business', bizFields);
+    if (prodFields.length || bizFields.length) {
+      html += '<div class="detail-row">';
+      if (prodFields.length) html += renderSection('Products', prodFields);
+      if (bizFields.length) html += renderSection('Business', bizFields);
+      html += '</div>';
+    }
   } else {
     // Tannery fields (Tier 1, 2, 3)
     const prodFields = [];
@@ -867,13 +871,17 @@ async function openDetail(item) {
     addField(prodFields, 'Novel Materials', item['Novel Materials']);
     addField(prodFields, 'Transparent Leather', item['Transparent Leather']);
     addField(prodFields, 'Combined Materials', item['Combined Materials']);
-    if (prodFields.length) html += renderSection('Products & Materials', prodFields);
     const bizFields = [];
     addField(bizFields, 'MOQ Info', item['MOQ Info']);
     addField(bizFields, 'Custom Work', item['Custom Work']);
     addField(bizFields, 'Ethical / Sustainability', item['Ethical/Sustainability']);
     addField(bizFields, 'Destinations', item['Destinations']);
-    if (bizFields.length) html += renderSection('Business', bizFields);
+    if (prodFields.length || bizFields.length) {
+      html += '<div class="detail-row">';
+      if (prodFields.length) html += renderSection('Products & Materials', prodFields);
+      if (bizFields.length) html += renderSection('Business', bizFields);
+      html += '</div>';
+    }
   }
 
   html += `<div class="section"><div class="section-title">Voice Memos</div><div id="memosList"></div></div>`;
