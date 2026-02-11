@@ -15,6 +15,7 @@
   --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;
   --fg:#f0f0f0;--fg2:#aaa;--fg3:#777;
   --cyan:#00BCD4;--purple:#9C27B0;--yellow:#FFC107;
+  --green:#4CAF50;--red:#e53935;
   --accent:#8B5A2B;--danger:#e53935;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bot:env(safe-area-inset-bottom,0px);
@@ -33,38 +34,49 @@ html,body{
   padding-top:calc(var(--safe-top) + 8px);
   border-bottom:1px solid var(--bg3);
 }
-.header-title{
-  text-align:center;font-size:20px;font-weight:700;
-  padding:0 16px 8px;letter-spacing:0.5px;color:var(--fg);
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 12px 8px}
+.header-title{font-size:20px;font-weight:700;letter-spacing:0.5px;color:var(--fg);flex:1;text-align:center}
+.header-left,.header-right{display:flex;gap:4px;min-width:40px}
+.header-right{justify-content:flex-end}
+.hdr-btn{
+  background:none;border:none;color:var(--fg2);font-size:18px;
+  padding:6px 8px;cursor:pointer;border-radius:8px;
 }
-.header-actions{
-  position:absolute;right:12px;top:calc(var(--safe-top) + 6px);
-  display:flex;gap:8px;
-}
-.header-actions button{
-  background:none;border:none;color:var(--fg2);font-size:20px;
-  padding:6px;cursor:pointer;border-radius:8px;
-}
-.header-actions button:active{background:var(--bg3)}
-.tabs{display:flex;border-bottom:1px solid var(--bg3)}
+.hdr-btn:active{background:var(--bg3)}
+.tabs{display:flex}
 .tab{
   flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;
-  color:var(--fg3);cursor:pointer;position:relative;
-  transition:color .2s;
+  color:var(--fg3);cursor:pointer;position:relative;transition:color .2s;
 }
 .tab.active{color:var(--fg)}
 .tab.active::after{
-  content:'';position:absolute;bottom:-1px;left:20%;right:20%;
+  content:'';position:absolute;bottom:0;left:20%;right:20%;
   height:2px;background:var(--accent);border-radius:2px;
 }
 .tab-count{font-weight:400;color:var(--fg3);font-size:12px;margin-left:4px}
+
+/* ── Search ── */
+.search-wrap{
+  overflow:hidden;max-height:0;transition:max-height .25s ease;
+  border-bottom:1px solid transparent;
+}
+.search-wrap.open{max-height:56px;border-bottom-color:var(--bg3)}
+.search-bar{padding:8px 12px;position:relative}
+.search-input{
+  width:100%;padding:10px 14px 10px 36px;border-radius:10px;
+  border:none;background:var(--bg3);color:var(--fg);font-size:15px;outline:none;
+}
+.search-input::placeholder{color:var(--fg3)}
+.search-icon{
+  position:absolute;left:24px;top:50%;transform:translateY(-50%);
+  color:var(--fg3);font-size:14px;pointer-events:none;
+}
 
 /* ── Bottom Nav ── */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
   background:var(--bg);border-top:1px solid var(--bg3);
-  display:flex;
-  padding-bottom:var(--safe-bot);
+  display:flex;padding-bottom:var(--safe-bot);
 }
 .nav-item{
   flex:1;text-align:center;padding:10px 0 8px;cursor:pointer;
@@ -73,39 +85,49 @@ html,body{
 .nav-item.active{color:var(--fg)}
 .nav-icon{font-size:20px;line-height:1}
 .nav-label{font-size:10px;font-weight:600;margin-top:2px;letter-spacing:0.3px}
-.nav-badge{
-  font-size:9px;font-weight:400;color:var(--fg3);
-}
+.nav-badge{font-size:9px;font-weight:400;color:var(--fg3)}
 
 /* ── List ── */
 .list-container{
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
+  position:fixed;top:0;left:0;right:0;bottom:0;
   padding-top:calc(var(--safe-top) + 90px);
   padding-bottom:calc(var(--safe-bot) + 62px);
   overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .list{padding:8px 12px}
-.empty-state{
-  text-align:center;color:var(--fg3);padding:60px 20px;font-size:15px;
+.empty-state{text-align:center;color:var(--fg3);padding:60px 20px;font-size:15px}
+
+/* ── Section Headers (Visited tab) ── */
+.list-section-header{
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:var(--fg3);padding:16px 0 6px;display:flex;align-items:center;gap:8px;
 }
+.list-section-header:first-child{padding-top:4px}
+.list-section-header .sh-icon{font-size:16px}
 
 /* ── Card ── */
+.card-wrap{position:relative;margin-bottom:8px}
+.card-actions{
+  position:absolute;top:0;right:0;bottom:0;
+  display:flex;align-items:stretch;border-radius:12px;overflow:hidden;
+}
+.card-action{
+  width:64px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;cursor:pointer;border:none;color:#fff;
+}
+.card-action.act-up{background:var(--green)}
+.card-action.act-down{background:var(--red)}
+.card-action.act-back{background:var(--fg3)}
 .card{
   background:var(--bg2);border-radius:12px;padding:14px 16px;
-  margin-bottom:8px;position:relative;overflow:hidden;
+  position:relative;overflow:hidden;
   transition:transform .3s ease,opacity .3s ease;
   cursor:pointer;user-select:none;-webkit-user-select:none;
+  border-left:5px solid transparent;
 }
 .card.swiping{transition:none}
 .card.removing{pointer-events:none}
-.card-inner{display:flex;align-items:flex-start;gap:10px}
-.card-colors{
-  display:flex;flex-direction:column;gap:3px;
-  padding-top:3px;flex-shrink:0;
-}
-.card-dot{width:6px;height:6px;border-radius:50%}
-.card-body{flex:1;min-width:0}
+.card-body{min-width:0}
 .card-name{font-size:15px;font-weight:600;line-height:1.3}
 .card-booth{font-size:13px;color:var(--fg2);margin-top:2px}
 .card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
@@ -116,14 +138,31 @@ html,body{
 .tag-pill.transparent{background:rgba(0,188,212,.15);color:var(--cyan)}
 .tag-pill.exotic{background:rgba(156,39,176,.15);color:var(--purple)}
 .tag-pill.novel{background:rgba(255,193,7,.15);color:var(--yellow)}
-.swipe-hint{
-  position:absolute;top:0;bottom:0;width:80px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;font-weight:700;opacity:0;
-  transition:opacity .15s;pointer-events:none;
+
+/* ── Confirmation Modal ── */
+.modal-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;
+  background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
 }
-.swipe-hint.right{right:0;left:auto;background:linear-gradient(to left,rgba(76,175,80,.3),transparent)}
-.swipe-hint.left{left:0;right:auto;background:linear-gradient(to right,rgba(244,67,54,.3),transparent)}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--bg2);border-radius:16px;padding:24px;
+  width:280px;text-align:center;
+}
+.modal-icon{font-size:40px;margin-bottom:8px}
+.modal-text{font-size:15px;margin-bottom:20px;color:var(--fg2)}
+.modal-name{font-weight:700;color:var(--fg)}
+.modal-btns{display:flex;gap:10px}
+.modal-btn{
+  flex:1;padding:12px;border-radius:10px;border:none;
+  font-size:15px;font-weight:600;cursor:pointer;
+}
+.modal-btn.cancel{background:var(--bg3);color:var(--fg)}
+.modal-btn.confirm-up{background:var(--green);color:#fff}
+.modal-btn.confirm-down{background:var(--red);color:#fff}
+.modal-btn.confirm-back{background:var(--fg3);color:#fff}
+.modal-btn:active{filter:brightness(.85)}
 
 /* ── Detail View ── */
 .detail-view{
@@ -138,21 +177,31 @@ html,body{
 .detail-header{
   position:sticky;top:0;z-index:10;background:var(--bg);
   display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;border-bottom:1px solid var(--bg3);
+  padding:12px 16px;border-bottom:1px solid var(--bg3);gap:8px;
 }
 .detail-back{
   background:none;border:none;color:var(--fg);font-size:15px;
   cursor:pointer;padding:6px 10px;border-radius:8px;
-  display:flex;align-items:center;gap:4px;
+  display:flex;align-items:center;gap:4px;flex-shrink:0;
 }
 .detail-back:active{background:var(--bg3)}
 .detail-back:disabled{opacity:.3;pointer-events:none}
 .detail-back .arrow{font-size:18px}
+.detail-actions{display:flex;align-items:center;gap:6px}
+.rate-btn{
+  width:40px;height:40px;border-radius:50%;border:2px solid var(--bg3);
+  background:none;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s,background .2s;
+}
+.rate-btn:active{filter:brightness(.85)}
+.rate-btn.active-up{border-color:var(--green);background:rgba(76,175,80,.2)}
+.rate-btn.active-down{border-color:var(--red);background:rgba(229,57,53,.2)}
 .rec-btn{
   background:var(--danger);color:#fff;border:none;
   font-size:14px;font-weight:600;padding:8px 14px;border-radius:20px;
   cursor:pointer;display:flex;align-items:center;gap:6px;
-  transition:background .2s;
+  transition:background .2s;flex-shrink:0;
 }
 .rec-btn:active{filter:brightness(.85)}
 .rec-btn.recording{animation:pulse 1.2s infinite}
@@ -191,23 +240,6 @@ html,body{
   cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
 .recording-actions button:active{background:var(--bg)}
-
-/* ── Search ── */
-.search-bar{
-  padding:8px 12px;position:sticky;top:0;z-index:10;
-}
-.search-input{
-  width:100%;padding:10px 14px 10px 36px;border-radius:10px;
-  border:none;background:var(--bg3);color:var(--fg);font-size:15px;
-  outline:none;
-}
-.search-input::placeholder{color:var(--fg3)}
-.search-icon{
-  position:absolute;left:24px;top:50%;transform:translateY(-50%);
-  color:var(--fg3);font-size:14px;pointer-events:none;
-}
-
-/* ── Audio Player ── */
 .audio-playing{background:var(--accent) !important}
 </style>
 </head>
@@ -215,13 +247,23 @@ html,body{
 
 <!-- List View -->
 <div class="header" id="listHeader">
-  <div class="header-title">LineaPelle 2026</div>
-  <div class="header-actions">
-    <button onclick="exportAllRecordings()" title="Export recordings" id="exportBtn">📦</button>
+  <div class="header-top">
+    <div class="header-left"></div>
+    <div class="header-title">LineaPelle 2026</div>
+    <div class="header-right">
+      <button class="hdr-btn" onclick="toggleSearch()" title="Search">🔍</button>
+      <button class="hdr-btn" onclick="exportAllRecordings()" title="Export">📦</button>
+    </div>
+  </div>
+  <div class="search-wrap" id="searchWrap">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search..." oninput="renderList()">
+    </div>
   </div>
   <div class="tabs">
-    <div class="tab active" id="tabUpcoming" onclick="switchTab('upcoming')">
-      Upcoming <span class="tab-count" id="countUpcoming"></span>
+    <div class="tab active" id="tabTovisit" onclick="switchTab('tovisit')">
+      To Visit <span class="tab-count" id="countTovisit"></span>
     </div>
     <div class="tab" id="tabVisited" onclick="switchTab('visited')">
       Visited <span class="tab-count" id="countVisited"></span>
@@ -230,10 +272,6 @@ html,body{
 </div>
 
 <div class="list-container" id="listContainer">
-  <div class="search-bar">
-    <span class="search-icon">🔍</span>
-    <input class="search-input" id="searchInput" type="text" placeholder="Search..." oninput="renderList()">
-  </div>
   <div class="list" id="list"></div>
 </div>
 
@@ -256,17 +294,33 @@ html,body{
   </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="modalCancel()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-icon" id="modalIcon"></div>
+    <div class="modal-text" id="modalText"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="modalCancel()">Cancel</button>
+      <button class="modal-btn" id="modalConfirmBtn" onclick="modalConfirm()">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <!-- Detail View -->
 <div class="detail-view" id="detailView">
   <div class="detail-header">
     <button class="detail-back" id="backBtn" onclick="closeDetail()">
       <span class="arrow">‹</span> Back
     </button>
-    <button class="rec-btn" id="recBtn" onclick="toggleRecording()">
-      <span id="recIcon">🎙</span>
-      <span id="recLabel">Record</span>
-      <span class="rec-timer" id="recTimer" style="display:none">00:00</span>
-    </button>
+    <div class="detail-actions">
+      <button class="rate-btn" id="detailUp" onclick="rateFromDetail('up')" title="Thumbs up">👍</button>
+      <button class="rate-btn" id="detailDown" onclick="rateFromDetail('down')" title="Thumbs down">👎</button>
+      <button class="rec-btn" id="recBtn" onclick="toggleRecording()">
+        <span id="recIcon">🎙</span>
+        <span id="recLabel">Rec</span>
+        <span class="rec-timer" id="recTimer" style="display:none">00:00</span>
+      </button>
+    </div>
   </div>
   <div class="detail-content" id="detailContent"></div>
 </div>
@@ -274,22 +328,24 @@ html,body{
 <script>
 // ─── State ───
 const allData = { tier1: [], tier2: [], accessories: [] };
-let visited = { tier1: {}, tier2: {}, accessories: {} };
+// ratings: { tier1: { id: { rating:'up'|'down', ts:number } }, ... }
+let ratings = { tier1: {}, tier2: {}, accessories: {} };
 let activeSection = 'tier1';
-let activeTab = 'upcoming';
+let activeTab = 'tovisit';
 let currentTannery = null;
 let db = null;
 
-// Recording state
+// Recording
 let mediaRecorder = null;
 let recordingChunks = [];
 let recordingStart = 0;
 let recordingTimer = null;
 let isRecording = false;
-
-// Audio playback
 let currentAudio = null;
 let currentPlayBtn = null;
+
+// Modal
+let pendingAction = null; // { itemId, action:'up'|'down'|'back', card }
 
 // ─── Init ───
 async function init() {
@@ -298,20 +354,17 @@ async function init() {
     fetch('tier2.json').then(r => r.json()),
     fetch('accessories.json').then(r => r.json())
   ]);
-
   const boothSort = (a, b) => (a['Booth'] || '').localeCompare(b['Booth'] || '', undefined, { numeric: true });
   allData.tier1 = r1.sort(boothSort);
   allData.tier2 = r2.sort(boothSort);
   allData.accessories = r3.sort(boothSort);
 
-  // Load visited state
   try {
-    const saved = localStorage.getItem('lp_visited_v2');
-    if (saved) visited = JSON.parse(saved);
-    // Ensure all sections exist
-    if (!visited.tier1) visited.tier1 = {};
-    if (!visited.tier2) visited.tier2 = {};
-    if (!visited.accessories) visited.accessories = {};
+    const saved = localStorage.getItem('lp_ratings_v3');
+    if (saved) ratings = JSON.parse(saved);
+    if (!ratings.tier1) ratings.tier1 = {};
+    if (!ratings.tier2) ratings.tier2 = {};
+    if (!ratings.accessories) ratings.accessories = {};
   } catch(e) {}
 
   db = await openDB();
@@ -319,12 +372,11 @@ async function init() {
   renderList();
 }
 
-function saveVisited() {
-  localStorage.setItem('lp_visited_v2', JSON.stringify(visited));
+function saveRatings() {
+  localStorage.setItem('lp_ratings_v3', JSON.stringify(ratings));
 }
-
 function currentItems() { return allData[activeSection]; }
-function currentVisited() { return visited[activeSection]; }
+function currentRatings() { return ratings[activeSection]; }
 
 // ─── IndexedDB ───
 function openDB() {
@@ -341,7 +393,6 @@ function openDB() {
     req.onerror = e => reject(e.target.error);
   });
 }
-
 function dbAdd(record) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('recordings', 'readwrite');
@@ -350,7 +401,6 @@ function dbAdd(record) {
     req.onerror = () => reject(req.error);
   });
 }
-
 function dbGetByTannery(tanneryId) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('recordings', 'readonly');
@@ -360,7 +410,6 @@ function dbGetByTannery(tanneryId) {
     req.onerror = () => reject(req.error);
   });
 }
-
 function dbGetAll() {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('recordings', 'readonly');
@@ -369,7 +418,6 @@ function dbGetAll() {
     req.onerror = () => reject(req.error);
   });
 }
-
 function dbDelete(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('recordings', 'readwrite');
@@ -378,26 +426,34 @@ function dbDelete(id) {
     req.onerror = () => reject(req.error);
   });
 }
-
-// Composite key for recordings: "tier1_5", "accessories_12"
 function recKey(item) { return activeSection + '_' + item.id; }
 
-// ─── Sections (bottom nav) ───
+// ─── Search ───
+function toggleSearch() {
+  const wrap = document.getElementById('searchWrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) {
+    document.getElementById('searchInput').focus();
+  } else {
+    document.getElementById('searchInput').value = '';
+    renderList();
+  }
+}
+
+// ─── Sections ───
 function switchSection(section) {
   activeSection = section;
-  activeTab = 'upcoming';
-  document.getElementById('tabUpcoming').classList.add('active');
+  activeTab = 'tovisit';
+  document.getElementById('tabTovisit').classList.add('active');
   document.getElementById('tabVisited').classList.remove('active');
   document.getElementById('searchInput').value = '';
-
+  document.getElementById('searchWrap').classList.remove('open');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navId = section === 'tier1' ? 'navTier1' : section === 'tier2' ? 'navTier2' : 'navAccessories';
   document.getElementById(navId).classList.add('active');
-
   document.getElementById('listContainer').scrollTop = 0;
   renderList();
 }
-
 function updateNavCounts() {
   document.getElementById('navCount1').textContent = allData.tier1.length;
   document.getElementById('navCount2').textContent = allData.tier2.length;
@@ -407,33 +463,49 @@ function updateNavCounts() {
 // ─── Tabs ───
 function switchTab(tab) {
   activeTab = tab;
-  document.getElementById('tabUpcoming').classList.toggle('active', tab === 'upcoming');
+  document.getElementById('tabTovisit').classList.toggle('active', tab === 'tovisit');
   document.getElementById('tabVisited').classList.toggle('active', tab === 'visited');
   document.getElementById('searchInput').value = '';
+  document.getElementById('searchWrap').classList.remove('open');
   renderList();
 }
 
-// ─── Tag helpers ───
+// ─── Tags ───
 function getSpecialTags(tags) {
   if (!tags) return [];
   const result = [];
-  if (tags.includes('TRANSPARENT_LEATHER')) result.push({ key: 'transparent', label: 'Transparent', color: 'var(--cyan)' });
-  if (tags.includes('EXOTIC_HIDE')) result.push({ key: 'exotic', label: 'Exotic', color: 'var(--purple)' });
-  if (tags.includes('NOVEL_MATERIAL')) result.push({ key: 'novel', label: 'Novel', color: 'var(--yellow)' });
+  if (tags.includes('TRANSPARENT_LEATHER')) result.push({ key: 'transparent', label: 'Transparent', color: '#00BCD4' });
+  if (tags.includes('EXOTIC_HIDE')) result.push({ key: 'exotic', label: 'Exotic', color: '#9C27B0' });
+  if (tags.includes('NOVEL_MATERIAL')) result.push({ key: 'novel', label: 'Novel', color: '#FFC107' });
   return result;
+}
+
+function cardBorderStyle(tags) {
+  const special = getSpecialTags(tags);
+  if (special.length === 0) return 'border-left-color:transparent';
+  if (special.length === 1) return `border-left-color:${special[0].color}`;
+  // Gradient for multiple tags
+  const colors = special.map(s => s.color);
+  const stops = colors.map((c, i) => {
+    const start = (i / colors.length * 100).toFixed(0);
+    const end = ((i + 1) / colors.length * 100).toFixed(0);
+    return `${c} ${start}%, ${c} ${end}%`;
+  }).join(', ');
+  return `border-image:linear-gradient(to bottom, ${stops}) 1`;
 }
 
 // ─── Render List ───
 function renderList() {
   const search = document.getElementById('searchInput').value.toLowerCase().trim();
   const listEl = document.getElementById('list');
-  const isVisited = activeTab === 'visited';
   const items = currentItems();
-  const vis = currentVisited();
+  const rats = currentRatings();
+  const isVisited = activeTab === 'visited';
 
+  // Filter
   let filtered = items.filter(t => {
-    const isV = vis[t.id] !== undefined;
-    if (isVisited !== isV) return false;
+    const hasRating = rats[t.id] !== undefined;
+    if (isVisited !== hasRating) return false;
     if (search) {
       const name = (t['Company Name'] || '').toLowerCase();
       const booth = (t['Booth'] || '').toLowerCase();
@@ -443,55 +515,117 @@ function renderList() {
     return true;
   });
 
-  if (isVisited) {
-    filtered.sort((a, b) => (vis[b.id] || 0) - (vis[a.id] || 0));
-  }
-
-  // Update tab counts
-  const visitedCount = items.filter(t => vis[t.id] !== undefined).length;
-  document.getElementById('countUpcoming').textContent = `(${items.length - visitedCount})`;
-  document.getElementById('countVisited').textContent = `(${visitedCount})`;
+  // Counts
+  const ratedCount = items.filter(t => rats[t.id] !== undefined).length;
+  document.getElementById('countTovisit').textContent = `(${items.length - ratedCount})`;
+  document.getElementById('countVisited').textContent = `(${ratedCount})`;
 
   if (filtered.length === 0) {
     const label = activeSection === 'accessories' ? 'exhibitors' : 'tanneries';
     listEl.innerHTML = `<div class="empty-state">${isVisited
-      ? `No ${label} visited yet.<br>Swipe right on a card to mark as visited.`
-      : search ? 'No matches found.' : `All ${label} visited! 🎉`
+      ? `No ${label} rated yet.<br>Swipe left on a card to rate.`
+      : search ? 'No matches found.' : `All ${label} rated! 🎉`
     }</div>`;
     return;
   }
 
   listEl.innerHTML = '';
-  filtered.forEach(t => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.id = t.id;
 
-    const specialTags = getSpecialTags(t['Tags']);
-    const dots = specialTags.map(s => `<div class="card-dot" style="background:${s.color}"></div>`).join('');
-    const pills = specialTags.map(s => `<span class="tag-pill ${s.key}">${s.label}</span>`).join('');
+  if (isVisited) {
+    // Split into thumbs up and thumbs down, each sorted by booth
+    const boothSort = (a, b) => (a['Booth'] || '').localeCompare(b['Booth'] || '', undefined, { numeric: true });
+    const upItems = filtered.filter(t => rats[t.id] && rats[t.id].rating === 'up').sort(boothSort);
+    const downItems = filtered.filter(t => rats[t.id] && rats[t.id].rating === 'down').sort(boothSort);
 
-    card.innerHTML = `
-      <div class="swipe-hint right">✓</div>
-      <div class="swipe-hint left">↩</div>
-      <div class="card-inner">
-        ${dots ? `<div class="card-colors">${dots}</div>` : ''}
-        <div class="card-body">
-          <div class="card-name">${esc(t['Company Name'])}</div>
-          <div class="card-booth">${esc(t['Booth'])}</div>
-          ${pills ? `<div class="card-tags">${pills}</div>` : ''}
-        </div>
-      </div>
+    if (upItems.length) {
+      const hdr = document.createElement('div');
+      hdr.className = 'list-section-header';
+      hdr.innerHTML = `<span class="sh-icon">👍</span> Interested (${upItems.length})`;
+      listEl.appendChild(hdr);
+      upItems.forEach(t => listEl.appendChild(createCard(t)));
+    }
+    if (downItems.length) {
+      const hdr = document.createElement('div');
+      hdr.className = 'list-section-header';
+      hdr.innerHTML = `<span class="sh-icon">👎</span> Not Interested (${downItems.length})`;
+      listEl.appendChild(hdr);
+      downItems.forEach(t => listEl.appendChild(createCard(t)));
+    }
+  } else {
+    filtered.forEach(t => listEl.appendChild(createCard(t)));
+  }
+}
+
+function createCard(t) {
+  const rats = currentRatings();
+  const rating = rats[t.id];
+  const isRated = rating !== undefined;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'card-wrap';
+
+  // Action buttons behind the card
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
+
+  if (!isRated) {
+    // To Visit: show thumbs up + thumbs down
+    actions.innerHTML = `
+      <button class="card-action act-up" data-action="up">👍</button>
+      <button class="card-action act-down" data-action="down">👎</button>
     `;
+  } else {
+    // Visited: show toggle rating + back
+    if (rating.rating === 'up') {
+      actions.innerHTML = `
+        <button class="card-action act-down" data-action="down">👎</button>
+        <button class="card-action act-back" data-action="back">↩</button>
+      `;
+    } else {
+      actions.innerHTML = `
+        <button class="card-action act-up" data-action="up">👍</button>
+        <button class="card-action act-back" data-action="back">↩</button>
+      `;
+    }
+  }
+  wrap.appendChild(actions);
 
-    setupSwipe(card, t.id, isVisited);
-    card.addEventListener('click', e => {
-      if (card.classList.contains('swiping')) return;
-      openDetail(t);
-    });
+  // Card
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = t.id;
+  card.setAttribute('style', cardBorderStyle(t['Tags']));
 
-    listEl.appendChild(card);
+  const specialTags = getSpecialTags(t['Tags']);
+  const pills = specialTags.map(s => `<span class="tag-pill ${s.key}">${s.label}</span>`).join('');
+
+  card.innerHTML = `
+    <div class="card-body">
+      <div class="card-name">${esc(t['Company Name'])}</div>
+      <div class="card-booth">${esc(t['Booth'])}</div>
+      ${pills ? `<div class="card-tags">${pills}</div>` : ''}
+    </div>
+  `;
+
+  wrap.appendChild(card);
+
+  // Setup swipe + tap
+  setupSwipe(wrap, card, t);
+  card.addEventListener('click', e => {
+    if (card.classList.contains('swiping') || card.classList.contains('swiped')) return;
+    openDetail(t);
   });
+
+  // Action button handlers
+  actions.querySelectorAll('.card-action').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const action = btn.dataset.action;
+      showModal(t, action, card);
+    });
+  });
+
+  return wrap;
 }
 
 function esc(s) {
@@ -501,12 +635,21 @@ function esc(s) {
   return d.innerHTML;
 }
 
-// ─── Swipe ───
-function setupSwipe(card, itemId, isVisitedTab) {
-  let startX = 0, startY = 0, dx = 0, swiping = false, locked = false;
-  const threshold = 80;
+// ─── Swipe (left to reveal actions) ───
+function setupSwipe(wrap, card, item) {
+  let startX = 0, startY = 0, dx = 0, swiping = false, locked = false, swiped = false;
+  const revealWidth = 128; // width of 2 action buttons
 
   card.addEventListener('touchstart', e => {
+    if (swiped) {
+      // If already swiped open, snap back on new touch
+      card.style.transition = 'transform .2s ease';
+      card.style.transform = '';
+      card.classList.remove('swiped');
+      setTimeout(() => { card.style.transition = ''; }, 200);
+      swiped = false;
+      return;
+    }
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     dx = 0; swiping = false; locked = false;
@@ -514,7 +657,7 @@ function setupSwipe(card, itemId, isVisitedTab) {
   }, { passive: true });
 
   card.addEventListener('touchmove', e => {
-    if (locked) return;
+    if (locked || swiped) return;
     const cx = e.touches[0].clientX;
     const cy = e.touches[0].clientY;
     const deltaX = cx - startX;
@@ -527,48 +670,99 @@ function setupSwipe(card, itemId, isVisitedTab) {
       card.classList.add('swiping');
     }
 
-    if (!isVisitedTab && deltaX < 0) { dx = 0; card.style.transform = ''; return; }
-    if (isVisitedTab && deltaX > 0) { dx = 0; card.style.transform = ''; return; }
-
-    dx = deltaX;
+    // Only allow left swipe
+    if (deltaX > 0) { dx = 0; card.style.transform = ''; return; }
+    dx = Math.max(deltaX, -revealWidth);
     card.style.transform = `translateX(${dx}px)`;
-
-    const hintR = card.querySelector('.swipe-hint.right');
-    const hintL = card.querySelector('.swipe-hint.left');
-    if (hintR) hintR.style.opacity = (!isVisitedTab && dx > 30) ? '1' : '0';
-    if (hintL) hintL.style.opacity = (isVisitedTab && dx < -30) ? '1' : '0';
   }, { passive: true });
 
   card.addEventListener('touchend', e => {
     if (!swiping) return;
     card.classList.remove('swiping');
 
-    const didSwipe = (!isVisitedTab && dx > threshold) || (isVisitedTab && dx < -threshold);
-    if (didSwipe) {
-      const dir = isVisitedTab ? -1 : 1;
-      card.classList.add('removing');
-      card.style.transition = 'transform .3s ease, opacity .3s ease';
-      card.style.transform = `translateX(${dir * window.innerWidth}px)`;
-      card.style.opacity = '0';
-
-      setTimeout(() => {
-        const vis = currentVisited();
-        if (isVisitedTab) {
-          delete vis[itemId];
-        } else {
-          vis[itemId] = Date.now();
-        }
-        saveVisited();
-        renderList();
-      }, 300);
+    if (dx < -50) {
+      // Snap to reveal
+      card.style.transition = 'transform .2s ease';
+      card.style.transform = `translateX(-${revealWidth}px)`;
+      card.classList.add('swiped');
+      swiped = true;
+      setTimeout(() => { card.style.transition = ''; }, 200);
     } else {
+      // Snap back
       card.style.transition = 'transform .2s ease';
       card.style.transform = '';
-      const hints = card.querySelectorAll('.swipe-hint');
-      hints.forEach(h => h.style.opacity = '0');
       setTimeout(() => { card.style.transition = ''; }, 200);
     }
   }, { passive: true });
+}
+
+// ─── Modal ───
+function showModal(item, action, card) {
+  pendingAction = { itemId: item.id, action, card, name: item['Company Name'] };
+  const overlay = document.getElementById('modalOverlay');
+  const icon = document.getElementById('modalIcon');
+  const text = document.getElementById('modalText');
+  const btn = document.getElementById('modalConfirmBtn');
+
+  const name = `<span class="modal-name">${esc(item['Company Name'])}</span>`;
+  if (action === 'up') {
+    icon.textContent = '👍';
+    text.innerHTML = `Rate ${name} as interested?`;
+    btn.className = 'modal-btn confirm-up';
+  } else if (action === 'down') {
+    icon.textContent = '👎';
+    text.innerHTML = `Rate ${name} as not interested?`;
+    btn.className = 'modal-btn confirm-down';
+  } else {
+    icon.textContent = '↩';
+    text.innerHTML = `Move ${name} back to To Visit?`;
+    btn.className = 'modal-btn confirm-back';
+  }
+  btn.textContent = 'Confirm';
+  overlay.classList.add('open');
+}
+
+function modalConfirm() {
+  if (!pendingAction) return;
+  const { itemId, action, card } = pendingAction;
+  const rats = currentRatings();
+
+  document.getElementById('modalOverlay').classList.remove('open');
+
+  // Animate card out
+  if (card) {
+    card.classList.add('removing');
+    card.style.transition = 'transform .3s ease, opacity .3s ease';
+    card.style.transform = `translateX(-${window.innerWidth}px)`;
+    card.style.opacity = '0';
+  }
+
+  setTimeout(() => {
+    if (action === 'back') {
+      delete rats[itemId];
+    } else {
+      rats[itemId] = { rating: action, ts: Date.now() };
+    }
+    saveRatings();
+    renderList();
+    // Update detail view rating buttons if open
+    if (currentTannery && currentTannery.id === itemId) updateDetailRatingUI();
+  }, card ? 300 : 0);
+
+  pendingAction = null;
+}
+
+function modalCancel() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  // Snap card back
+  if (pendingAction && pendingAction.card) {
+    const card = pendingAction.card;
+    card.style.transition = 'transform .2s ease';
+    card.style.transform = '';
+    card.classList.remove('swiped');
+    setTimeout(() => { card.style.transition = ''; }, 200);
+  }
+  pendingAction = null;
 }
 
 // ─── Detail View ───
@@ -586,19 +780,15 @@ async function openDetail(item) {
     ${pills ? `<div class="detail-tags">${pills}</div>` : ''}
   `;
 
-  // Basic Info (shared across all sections)
+  // Basic Info
   const basicFields = [];
   addField(basicFields, 'Country', item['Country']);
   if (item['Website']) {
     const url = item['Website'].startsWith('http') ? item['Website'] : 'https://' + item['Website'];
     basicFields.push({ label: 'Website', value: `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(item['Website'])}</a>` });
   }
-  if (item['Email']) {
-    basicFields.push({ label: 'Email', value: `<a href="mailto:${esc(item['Email'])}">${esc(item['Email'])}</a>` });
-  }
-  if (item['Phone']) {
-    basicFields.push({ label: 'Phone', value: `<a href="tel:${esc(item['Phone'])}">${esc(item['Phone'])}</a>` });
-  }
+  if (item['Email']) basicFields.push({ label: 'Email', value: `<a href="mailto:${esc(item['Email'])}">${esc(item['Email'])}</a>` });
+  if (item['Phone']) basicFields.push({ label: 'Phone', value: `<a href="tel:${esc(item['Phone'])}">${esc(item['Phone'])}</a>` });
   if (basicFields.length) html += renderSection('Basic Info', basicFields);
 
   // Classification
@@ -616,21 +806,24 @@ async function openDetail(item) {
   }
   if (classFields.length) html += renderSection('Classification', classFields);
 
+  // Summary — right after classification
+  const sumFields = [];
+  addField(sumFields, 'Distinctive Summary', item['Distinctive Summary']);
+  addField(sumFields, 'Notes', item['Notes']);
+  if (sumFields.length) html += renderSection('Summary', sumFields);
+
   if (activeSection === 'accessories') {
-    // Accessories-specific fields
     const prodFields = [];
     addField(prodFields, 'Product Types', item['Product Types']);
     addField(prodFields, 'Hardware Types', item['Hardware Types']);
     addField(prodFields, 'Materials', item['Materials']);
     addField(prodFields, 'Product Description', item['Product Description']);
     if (prodFields.length) html += renderSection('Products', prodFields);
-
     const bizFields = [];
     addField(bizFields, 'MOQ Info', item['MOQ Info']);
     addField(bizFields, 'Custom Work', item['Custom Work']);
     if (bizFields.length) html += renderSection('Business', bizFields);
   } else {
-    // Tannery-specific fields (Tier 1 & Tier 2)
     const prodFields = [];
     addField(prodFields, 'Hide Types', item['Hide Types']);
     addField(prodFields, 'Tanning Methods', item['Tanning Methods']);
@@ -642,7 +835,6 @@ async function openDetail(item) {
     addField(prodFields, 'Transparent Leather', item['Transparent Leather']);
     addField(prodFields, 'Combined Materials', item['Combined Materials']);
     if (prodFields.length) html += renderSection('Products & Materials', prodFields);
-
     const bizFields = [];
     addField(bizFields, 'MOQ Info', item['MOQ Info']);
     addField(bizFields, 'Custom Work', item['Custom Work']);
@@ -651,19 +843,35 @@ async function openDetail(item) {
     if (bizFields.length) html += renderSection('Business', bizFields);
   }
 
-  // Summary (shared)
-  const sumFields = [];
-  addField(sumFields, 'Distinctive Summary', item['Distinctive Summary']);
-  addField(sumFields, 'Notes', item['Notes']);
-  if (sumFields.length) html += renderSection('Summary', sumFields);
-
   html += `<div class="section"><div class="section-title">Voice Memos</div><div id="memosList"></div></div>`;
-
   content.innerHTML = html;
   view.classList.add('open');
   view.scrollTop = 0;
-
+  updateDetailRatingUI();
   await loadRecordings();
+}
+
+function updateDetailRatingUI() {
+  if (!currentTannery) return;
+  const rats = currentRatings();
+  const r = rats[currentTannery.id];
+  const upBtn = document.getElementById('detailUp');
+  const downBtn = document.getElementById('detailDown');
+  upBtn.classList.remove('active-up');
+  downBtn.classList.remove('active-down');
+  if (r && r.rating === 'up') upBtn.classList.add('active-up');
+  if (r && r.rating === 'down') downBtn.classList.add('active-down');
+}
+
+function rateFromDetail(action) {
+  if (!currentTannery) return;
+  const rats = currentRatings();
+  const current = rats[currentTannery.id];
+
+  // If already this rating, do nothing
+  if (current && current.rating === action) return;
+
+  showModal(currentTannery, action, null);
 }
 
 function addField(arr, label, value) {
@@ -682,6 +890,7 @@ function closeDetail() {
   document.getElementById('detailView').classList.remove('open');
   stopAudio();
   currentTannery = null;
+  renderList(); // refresh list to reflect any rating changes
 }
 
 // ─── Recordings ───
@@ -692,7 +901,7 @@ async function loadRecordings() {
   recs.sort((a, b) => b.timestamp - a.timestamp);
   const el = document.getElementById('memosList');
   if (!recs.length) {
-    el.innerHTML = '<div style="color:var(--fg3);font-size:13px">No recordings yet. Tap Record to start.</div>';
+    el.innerHTML = '<div style="color:var(--fg3);font-size:13px">No recordings yet. Tap Rec to start.</div>';
     return;
   }
   el.innerHTML = recs.map(r => `
@@ -735,10 +944,7 @@ async function playRecording(id, btn) {
 }
 
 function stopAudio() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   if (currentPlayBtn) {
     currentPlayBtn.textContent = '▶';
     currentPlayBtn.parentElement.parentElement.classList.remove('audio-playing');
@@ -754,11 +960,8 @@ async function downloadRecording(id) {
     if (!rec) return;
     const url = URL.createObjectURL(rec.blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = rec.filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = rec.filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 }
@@ -772,30 +975,19 @@ async function deleteRecording(id) {
 
 // ─── Voice Recording ───
 async function toggleRecording() {
-  if (isRecording) {
-    stopRecordingSession();
-  } else {
-    await startRecordingSession();
-  }
+  if (isRecording) stopRecordingSession();
+  else await startRecordingSession();
 }
 
 async function startRecordingSession() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordingChunks = [];
-
     const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
       ? 'audio/webm;codecs=opus'
-      : MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : 'audio/mp4';
-
+      : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
     mediaRecorder = new MediaRecorder(stream, { mimeType });
-
-    mediaRecorder.ondataavailable = e => {
-      if (e.data.size > 0) recordingChunks.push(e.data);
-    };
-
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordingChunks.push(e.data); };
     mediaRecorder.onstop = async () => {
       stream.getTracks().forEach(t => t.stop());
       const blob = new Blob(recordingChunks, { type: mediaRecorder.mimeType });
@@ -803,38 +995,23 @@ async function startRecordingSession() {
       const ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
       const slug = slugify(currentTannery['Company Name']);
       const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
-      const filename = `${slug}_${ts}.${ext}`;
-
-      await dbAdd({
-        tanneryId: recKey(currentTannery),
-        filename,
-        timestamp: Date.now(),
-        duration,
-        blob
-      });
-
+      await dbAdd({ tanneryId: recKey(currentTannery), filename: `${slug}_${ts}.${ext}`, timestamp: Date.now(), duration, blob });
       await loadRecordings();
     };
-
     mediaRecorder.start(1000);
     recordingStart = Date.now();
     isRecording = true;
     updateRecordingUI();
-
     recordingTimer = setInterval(() => {
-      const elapsed = Date.now() - recordingStart;
-      document.getElementById('recTimer').textContent = formatDuration(elapsed);
+      document.getElementById('recTimer').textContent = formatDuration(Date.now() - recordingStart);
     }, 200);
-
   } catch (err) {
     alert('Microphone access denied. Please allow microphone access in your device settings.');
   }
 }
 
 function stopRecordingSession() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
   isRecording = false;
   clearInterval(recordingTimer);
   updateRecordingUI();
@@ -846,129 +1023,79 @@ function updateRecordingUI() {
   const label = document.getElementById('recLabel');
   const timer = document.getElementById('recTimer');
   const back = document.getElementById('backBtn');
-
   if (isRecording) {
-    btn.classList.add('recording');
-    icon.textContent = '⏹';
-    label.textContent = 'Stop';
-    timer.style.display = '';
-    back.disabled = true;
+    btn.classList.add('recording'); icon.textContent = '⏹'; label.textContent = 'Stop';
+    timer.style.display = ''; back.disabled = true;
   } else {
-    btn.classList.remove('recording');
-    icon.textContent = '🎙';
-    label.textContent = 'Record';
-    timer.style.display = 'none';
-    timer.textContent = '00:00';
-    back.disabled = false;
+    btn.classList.remove('recording'); icon.textContent = '🎙'; label.textContent = 'Rec';
+    timer.style.display = 'none'; timer.textContent = '00:00'; back.disabled = false;
   }
 }
 
 function slugify(name) {
-  return (name || 'unknown').toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .replace(/\s+/g, '_')
-    .slice(0, 50);
+  return (name || 'unknown').toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').slice(0, 50);
 }
 
 // ─── Export ───
 async function exportAllRecordings() {
   const recs = await dbGetAll();
-  if (!recs.length) {
-    alert('No recordings to export.');
-    return;
-  }
-
-  const allItems = [...allData.tier1, ...allData.tier2, ...allData.accessories];
+  if (!recs.length) { alert('No recordings to export.'); return; }
   const files = [];
   for (const r of recs) {
-    // tanneryId is like "tier1_5" — find the matching item
     const parts = r.tanneryId.split('_');
     const section = parts[0] === 'accessories' ? 'accessories' : parts[0];
-    const id = parseInt(parts.slice(section === 'accessories' ? 1 : 1).join('_'));
+    const id = parseInt(parts.slice(1).join('_'));
     const sectionData = allData[section] || [];
     const item = sectionData.find(t => t.id === id);
     const folder = item ? slugify(item['Company Name']) : 'unknown';
     const arrayBuf = await r.blob.arrayBuffer();
     files.push({ name: `${section}/${folder}/${r.filename}`, data: new Uint8Array(arrayBuf) });
   }
-
   const zipBlob = createZip(files);
   const url = URL.createObjectURL(zipBlob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `lineapelle_recordings_${new Date().toISOString().slice(0,10)}.zip`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = `lineapelle_recordings_${new Date().toISOString().slice(0,10)}.zip`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-// ─── Minimal ZIP builder ───
 function createZip(files) {
-  const localHeaders = [];
-  const centralHeaders = [];
+  const localHeaders = [], centralHeaders = [];
   let offset = 0;
-
   for (const file of files) {
     const nameBytes = new TextEncoder().encode(file.name);
-    const data = file.data;
-    const crc = crc32(data);
-
+    const data = file.data, crc = crc32(data);
     const local = new Uint8Array(30 + nameBytes.length + data.length);
     const lv = new DataView(local.buffer);
-    lv.setUint32(0, 0x04034b50, true);
-    lv.setUint16(4, 20, true);
-    lv.setUint16(6, 0, true);
-    lv.setUint16(8, 0, true);
-    lv.setUint16(10, 0, true);
-    lv.setUint16(12, 0, true);
-    lv.setUint32(14, crc, true);
-    lv.setUint32(18, data.length, true);
-    lv.setUint32(22, data.length, true);
-    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0, true); lv.setUint16(8, 0, true);
+    lv.setUint16(10, 0, true); lv.setUint16(12, 0, true);
+    lv.setUint32(14, crc, true); lv.setUint32(18, data.length, true);
+    lv.setUint32(22, data.length, true); lv.setUint16(26, nameBytes.length, true);
     lv.setUint16(28, 0, true);
-    local.set(nameBytes, 30);
-    local.set(data, 30 + nameBytes.length);
+    local.set(nameBytes, 30); local.set(data, 30 + nameBytes.length);
     localHeaders.push(local);
-
     const central = new Uint8Array(46 + nameBytes.length);
     const cv = new DataView(central.buffer);
-    cv.setUint32(0, 0x02014b50, true);
-    cv.setUint16(4, 20, true);
-    cv.setUint16(6, 20, true);
-    cv.setUint16(8, 0, true);
-    cv.setUint16(10, 0, true);
-    cv.setUint16(12, 0, true);
-    cv.setUint16(14, 0, true);
-    cv.setUint32(16, crc, true);
-    cv.setUint32(20, data.length, true);
-    cv.setUint32(24, data.length, true);
-    cv.setUint16(28, nameBytes.length, true);
-    cv.setUint16(30, 0, true);
-    cv.setUint16(32, 0, true);
-    cv.setUint16(34, 0, true);
-    cv.setUint16(36, 0, true);
-    cv.setUint32(38, 32, true);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true); cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true); cv.setUint16(12, 0, true);
+    cv.setUint16(14, 0, true); cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true);
+    cv.setUint16(28, nameBytes.length, true); cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true); cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true); cv.setUint32(38, 32, true);
     cv.setUint32(42, offset, true);
-    central.set(nameBytes, 46);
-    centralHeaders.push(central);
-
+    central.set(nameBytes, 46); centralHeaders.push(central);
     offset += local.length;
   }
-
   const centralSize = centralHeaders.reduce((a, b) => a + b.length, 0);
-
   const end = new Uint8Array(22);
   const ev = new DataView(end.buffer);
-  ev.setUint32(0, 0x06054b50, true);
-  ev.setUint16(4, 0, true);
-  ev.setUint16(6, 0, true);
-  ev.setUint16(8, files.length, true);
-  ev.setUint16(10, files.length, true);
-  ev.setUint32(12, centralSize, true);
-  ev.setUint32(16, offset, true);
-  ev.setUint16(20, 0, true);
-
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(4, 0, true);
+  ev.setUint16(6, 0, true); ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true); ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true); ev.setUint16(20, 0, true);
   return new Blob([...localHeaders, ...centralHeaders, end], { type: 'application/zip' });
 }
 
@@ -976,24 +1103,13 @@ function crc32(data) {
   let crc = 0xFFFFFFFF;
   for (let i = 0; i < data.length; i++) {
     crc ^= data[i];
-    for (let j = 0; j < 8; j++) {
-      crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0);
-    }
+    for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0);
   }
   return (crc ^ 0xFFFFFFFF) >>> 0;
 }
 
-// ─── Keyboard shortcut for back (desktop testing) ───
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeDetail();
-});
-
-// ─── Service Worker ───
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-
-// ─── Start ───
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 init();
 </script>
 </body>

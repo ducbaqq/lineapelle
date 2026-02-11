@@ -1,13 +1,14 @@
-const CACHE_NAME = 'lineapelle-v2';
+const CACHE_NAME = 'lineapelle-v3';
+const BASE = '/lineapelle/';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/tanneries.json',
-  '/tier2.json',
-  '/accessories.json',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  BASE,
+  BASE + 'index.html',
+  BASE + 'tanneries.json',
+  BASE + 'tier2.json',
+  BASE + 'accessories.json',
+  BASE + 'manifest.json',
+  BASE + 'icons/icon-192x192.png',
+  BASE + 'icons/icon-512x512.png'
 ];
 
 self.addEventListener('install', e => {
