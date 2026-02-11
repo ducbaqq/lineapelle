@@ -226,6 +226,18 @@ html,body{
   letter-spacing:1px;color:var(--fg3);margin-bottom:8px;
   padding-bottom:4px;border-bottom:1px solid var(--bg3);
 }
+.memos-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(220,220,220,.3);
+}
+.memos-header .section-title{
+  color:#ddd;border-bottom:none;margin-bottom:0;padding-bottom:0;
+}
+.dl-all-btn{
+  font-size:11px;color:var(--cyan);background:none;border:none;
+  cursor:pointer;font-weight:600;padding:2px 6px;border-radius:6px;
+}
+.dl-all-btn:active{background:var(--bg3)}
 .field{margin-bottom:8px}
 .field-label{font-size:12px;color:var(--fg3);margin-bottom:1px}
 .field-value{font-size:14px;line-height:1.4}
@@ -884,7 +896,7 @@ async function openDetail(item) {
     }
   }
 
-  html += `<div class="section"><div class="section-title">Voice Memos</div><div id="memosList"></div></div>`;
+  html += `<div class="section"><div class="memos-header"><div class="section-title">Voice Memos</div><button class="dl-all-btn" id="dlAllMemosBtn" onclick="downloadAllMemos()" style="display:none">Download All</button></div><div id="memosList"></div></div>`;
   content.innerHTML = html;
   view.classList.add('open');
   view.scrollTop = 0;
@@ -941,10 +953,13 @@ async function loadRecordings() {
   const recs = await dbGetByTannery(key);
   recs.sort((a, b) => a.timestamp - b.timestamp);
   const el = document.getElementById('memosList');
+  const dlBtn = document.getElementById('dlAllMemosBtn');
   if (!recs.length) {
     el.innerHTML = '<div style="color:var(--fg3);font-size:13px">No recordings yet. Tap Rec to start.</div>';
+    if (dlBtn) dlBtn.style.display = 'none';
     return;
   }
+  if (dlBtn) dlBtn.style.display = '';
   el.innerHTML = recs.map(r => `
     <div class="recording-item" id="rec-${r.id}">
       <div class="recording-info">
@@ -1012,6 +1027,24 @@ async function deleteRecording(id) {
   stopAudio();
   await dbDelete(id);
   await loadRecordings();
+}
+
+async function downloadAllMemos() {
+  if (!currentTannery || !db) return;
+  const recs = await dbGetByTannery(recKey(currentTannery));
+  if (!recs.length) return;
+  const slug = slugify(currentTannery['Company Name']);
+  const files = [];
+  for (const r of recs) {
+    const buf = await r.blob.arrayBuffer();
+    files.push({ name: `${slug}/${r.filename}`, data: new Uint8Array(buf) });
+  }
+  const zipBlob = createZip(files);
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${slug}_memos.zip`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // ─── Voice Recording ───
