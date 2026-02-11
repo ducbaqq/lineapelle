@@ -1,0 +1,250 @@
+[
+  {
+    "Company Name": "LAMONTI CUOIO SPA SOCIETA' BENEFIT",
+    "Booth": "3P K15, L14 - L16",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 0
+  },
+  {
+    "Company Name": "OTELLO CUOIFICIO SRL",
+    "Booth": "3P D2 - D4",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 1
+  },
+  {
+    "Company Name": "CONCERIA AUSONIA SRL",
+    "Booth": "3P F19 - F21, G20 - G22",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 2
+  },
+  {
+    "Company Name": "ERDOGAN DERI",
+    "Booth": "2P L1 - L3",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 3
+  },
+  {
+    "Company Name": "CONCERIA LA VENETA SPA",
+    "Booth": "3P P13 - P15, R14 - R16",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 4
+  },
+  {
+    "Company Name": "F.L. LEATHER SRL",
+    "Booth": "2P E28 - E30",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 5
+  },
+  {
+    "Company Name": "KELSO LEATHER SRL",
+    "Booth": "3P B15, C16",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 6
+  },
+  {
+    "Company Name": "MPG INDUSTRIA CONCIARIA SRL",
+    "Booth": "3P B23 - B25, C24 - C26",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Only offers leather >3mm",
+    "id": 7
+  },
+  {
+    "Company Name": "AKAYLAR DERI SAN VE TIC AS",
+    "Booth": "2P N28",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 8
+  },
+  {
+    "Company Name": "ARX COMPANY SRL",
+    "Booth": "2P A7",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 9
+  },
+  {
+    "Company Name": "B LINE SRL CONCERIA ITALIANA",
+    "Booth": "3P P9 - P11, R10 - R12",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 10
+  },
+  {
+    "Company Name": "CONCERIA NUVOLARI SOCIETÀ BENEFIT SRL",
+    "Booth": "2P E2",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 11
+  },
+  {
+    "Company Name": "DENİZLER DERİ GİYİM SAN VE TİC LTD ŞTİ",
+    "Booth": "2P N8 - N10",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 12
+  },
+  {
+    "Company Name": "DONGGUAN BONWAY LEATHER PRODUCTS CO., LTD",
+    "Booth": "2P H22 - H24",
+    "Country": "CHINA",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 13
+  },
+  {
+    "Company Name": "GÖRYAKINLAR DERI SANAYI VE TIC AŞ",
+    "Booth": "2P F11 - F15",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 14
+  },
+  {
+    "Company Name": "ILCEA",
+    "Booth": "3P P1 - P7, R2 - R8",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 15
+  },
+  {
+    "Company Name": "ISKEFE DERI SAN TIC VE AS",
+    "Booth": "3P T23 - T29, U24 - U30",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 16
+  },
+  {
+    "Company Name": "ITALIANA PELLI DI GARGIULO VITTORIO SRL",
+    "Booth": "1P G3, H4",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 17
+  },
+  {
+    "Company Name": "ITALTAN DIVISIONE",
+    "Booth": "1P A11 - A29, B12 - B30",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 18
+  },
+  {
+    "Company Name": "JEAMAN LEATHER & LEATHER CLOTHING",
+    "Booth": "2P N16 - N20",
+    "Country": "PAKISTAN",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 19
+  },
+  {
+    "Company Name": "KTM LEATHER (PVT) LTD",
+    "Booth": "2P N15 - N19",
+    "Country": "PAKISTAN",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 20
+  },
+  {
+    "Company Name": "MIMA LEATHER (PVT) LTD",
+    "Booth": "2P N21 - N23",
+    "Country": "PAKISTAN",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 21
+  },
+  {
+    "Company Name": "N M HASHIM & CO",
+    "Booth": "2P H25 - H27",
+    "Country": "INDIA",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 22
+  },
+  {
+    "Company Name": "NUOVA LEON SRL CONCERIA",
+    "Booth": "1P G6 - G8",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 23
+  },
+  {
+    "Company Name": "OMNICUIR SARL",
+    "Booth": "3P F17",
+    "Country": "FRANCE",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 24
+  },
+  {
+    "Company Name": "PALOMARES PIEL, SL",
+    "Booth": "2P L12",
+    "Country": "SPAIN",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 25
+  },
+  {
+    "Company Name": "PARS GLOBAL DERİ TİCARET VE LİMİTED ŞİRKETİ",
+    "Booth": "2P L8",
+    "Country": "TURKEY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 26
+  },
+  {
+    "Company Name": "PINGYU HONGSHAN LEATHER INDUSTRY CO., LTD",
+    "Booth": "2P K5",
+    "Country": "CHINA",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 27
+  },
+  {
+    "Company Name": "QINGTONGXIA XIANGYUN FUR AND LEATHER CO., LTD",
+    "Booth": "2P L15",
+    "Country": "CHINA",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 28
+  },
+  {
+    "Company Name": "RIBA GUIXA CURTIDOS SLU",
+    "Booth": "3P V1 - V13, Z2 - Z14",
+    "Country": "SPAIN",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 29
+  },
+  {
+    "Company Name": "SANTORI PELLAMI SPA",
+    "Booth": "2P E2",
+    "Country": "ITALY",
+    "Sector": "Tanneries",
+    "Reason": "Low relevance score (0)",
+    "id": 30
+  }
+]

@@ -287,9 +287,19 @@ html,body{
     <div class="nav-label">Tier 2</div>
     <div class="nav-badge" id="navCount2"></div>
   </div>
+  <div class="nav-item" id="navTier3" onclick="switchSection('tier3')">
+    <div class="nav-icon">🥉</div>
+    <div class="nav-label">Tier 3</div>
+    <div class="nav-badge" id="navCount3"></div>
+  </div>
+  <div class="nav-item" id="navTier4" onclick="switchSection('tier4')">
+    <div class="nav-icon">⏭️</div>
+    <div class="nav-label">Tier 4</div>
+    <div class="nav-badge" id="navCount4"></div>
+  </div>
   <div class="nav-item" id="navAccessories" onclick="switchSection('accessories')">
     <div class="nav-icon">⚙️</div>
-    <div class="nav-label">Accessories</div>
+    <div class="nav-label">Acc.</div>
     <div class="nav-badge" id="navCountAcc"></div>
   </div>
 </div>
@@ -327,9 +337,8 @@ html,body{
 
 <script>
 // ─── State ───
-const allData = { tier1: [], tier2: [], accessories: [] };
-// ratings: { tier1: { id: { rating:'up'|'down', ts:number } }, ... }
-let ratings = { tier1: {}, tier2: {}, accessories: {} };
+const allData = { tier1: [], tier2: [], tier3: [], tier4: [], accessories: [] };
+let ratings = { tier1: {}, tier2: {}, tier3: {}, tier4: {}, accessories: {} };
 let activeSection = 'tier1';
 let activeTab = 'tovisit';
 let currentTannery = null;
@@ -349,21 +358,27 @@ let pendingAction = null; // { itemId, action:'up'|'down'|'back', card }
 
 // ─── Init ───
 async function init() {
-  const [r1, r2, r3] = await Promise.all([
+  const [r1, r2, r3, r4, r5] = await Promise.all([
     fetch('tanneries.json').then(r => r.json()),
     fetch('tier2.json').then(r => r.json()),
+    fetch('tier3.json').then(r => r.json()),
+    fetch('tier4.json').then(r => r.json()),
     fetch('accessories.json').then(r => r.json())
   ]);
   const boothSort = (a, b) => (a['Booth'] || '').localeCompare(b['Booth'] || '', undefined, { numeric: true });
   allData.tier1 = r1.sort(boothSort);
   allData.tier2 = r2.sort(boothSort);
-  allData.accessories = r3.sort(boothSort);
+  allData.tier3 = r3.sort(boothSort);
+  allData.tier4 = r4.sort(boothSort);
+  allData.accessories = r5.sort(boothSort);
 
   try {
     const saved = localStorage.getItem('lp_ratings_v3');
     if (saved) ratings = JSON.parse(saved);
     if (!ratings.tier1) ratings.tier1 = {};
     if (!ratings.tier2) ratings.tier2 = {};
+    if (!ratings.tier3) ratings.tier3 = {};
+    if (!ratings.tier4) ratings.tier4 = {};
     if (!ratings.accessories) ratings.accessories = {};
   } catch(e) {}
 
@@ -449,14 +464,16 @@ function switchSection(section) {
   document.getElementById('searchInput').value = '';
   document.getElementById('searchWrap').classList.remove('open');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navId = section === 'tier1' ? 'navTier1' : section === 'tier2' ? 'navTier2' : 'navAccessories';
-  document.getElementById(navId).classList.add('active');
+  const navMap = { tier1:'navTier1', tier2:'navTier2', tier3:'navTier3', tier4:'navTier4', accessories:'navAccessories' };
+  document.getElementById(navMap[section]).classList.add('active');
   document.getElementById('listContainer').scrollTop = 0;
   renderList();
 }
 function updateNavCounts() {
   document.getElementById('navCount1').textContent = allData.tier1.length;
   document.getElementById('navCount2').textContent = allData.tier2.length;
+  document.getElementById('navCount3').textContent = allData.tier3.length;
+  document.getElementById('navCount4').textContent = allData.tier4.length;
   document.getElementById('navCountAcc').textContent = allData.accessories.length;
 }
 
@@ -812,7 +829,12 @@ async function openDetail(item) {
   addField(sumFields, 'Notes', item['Notes']);
   if (sumFields.length) html += renderSection('Summary', sumFields);
 
-  if (activeSection === 'accessories') {
+  if (activeSection === 'tier4') {
+    // Tier 4 has minimal data — just reason for skipping
+    const t4Fields = [];
+    addField(t4Fields, 'Reason', item['Reason']);
+    if (t4Fields.length) html += renderSection('Skip Reason', t4Fields);
+  } else if (activeSection === 'accessories') {
     const prodFields = [];
     addField(prodFields, 'Product Types', item['Product Types']);
     addField(prodFields, 'Hardware Types', item['Hardware Types']);
@@ -824,6 +846,7 @@ async function openDetail(item) {
     addField(bizFields, 'Custom Work', item['Custom Work']);
     if (bizFields.length) html += renderSection('Business', bizFields);
   } else {
+    // Tannery fields (Tier 1, 2, 3)
     const prodFields = [];
     addField(prodFields, 'Hide Types', item['Hide Types']);
     addField(prodFields, 'Tanning Methods', item['Tanning Methods']);
