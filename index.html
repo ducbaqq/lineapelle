@@ -59,12 +59,30 @@ html,body{
 }
 .tab-count{font-weight:400;color:var(--fg3);font-size:12px;margin-left:4px}
 
+/* ── Bottom Nav ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--bg);border-top:1px solid var(--bg3);
+  display:flex;
+  padding-bottom:var(--safe-bot);
+}
+.nav-item{
+  flex:1;text-align:center;padding:10px 0 8px;cursor:pointer;
+  transition:color .2s;color:var(--fg3);
+}
+.nav-item.active{color:var(--fg)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:10px;font-weight:600;margin-top:2px;letter-spacing:0.3px}
+.nav-badge{
+  font-size:9px;font-weight:400;color:var(--fg3);
+}
+
 /* ── List ── */
 .list-container{
   position:fixed;
   top:0;left:0;right:0;bottom:0;
   padding-top:calc(var(--safe-top) + 90px);
-  padding-bottom:calc(var(--safe-bot) + 16px);
+  padding-bottom:calc(var(--safe-bot) + 62px);
   overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .list{padding:8px 12px}
@@ -214,9 +232,28 @@ html,body{
 <div class="list-container" id="listContainer">
   <div class="search-bar">
     <span class="search-icon">🔍</span>
-    <input class="search-input" id="searchInput" type="text" placeholder="Search tanneries..." oninput="renderList()">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search..." oninput="renderList()">
   </div>
   <div class="list" id="list"></div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="navTier1" onclick="switchSection('tier1')">
+    <div class="nav-icon">🥇</div>
+    <div class="nav-label">Tier 1</div>
+    <div class="nav-badge" id="navCount1"></div>
+  </div>
+  <div class="nav-item" id="navTier2" onclick="switchSection('tier2')">
+    <div class="nav-icon">🥈</div>
+    <div class="nav-label">Tier 2</div>
+    <div class="nav-badge" id="navCount2"></div>
+  </div>
+  <div class="nav-item" id="navAccessories" onclick="switchSection('accessories')">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">Accessories</div>
+    <div class="nav-badge" id="navCountAcc"></div>
+  </div>
 </div>
 
 <!-- Detail View -->
@@ -236,8 +273,9 @@ html,body{
 
 <script>
 // ─── State ───
-let tanneries = [];
-let visited = {};        // { id: timestamp }
+const allData = { tier1: [], tier2: [], accessories: [] };
+let visited = { tier1: {}, tier2: {}, accessories: {} };
+let activeSection = 'tier1';
 let activeTab = 'upcoming';
 let currentTannery = null;
 let db = null;
@@ -255,36 +293,43 @@ let currentPlayBtn = null;
 
 // ─── Init ───
 async function init() {
-  // Load data
-  const resp = await fetch('tanneries.json');
-  tanneries = await resp.json();
+  const [r1, r2, r3] = await Promise.all([
+    fetch('tanneries.json').then(r => r.json()),
+    fetch('tier2.json').then(r => r.json()),
+    fetch('accessories.json').then(r => r.json())
+  ]);
 
-  // Sort by booth
-  tanneries.sort((a, b) => {
-    const ba = a['Booth'] || '', bb = b['Booth'] || '';
-    return ba.localeCompare(bb, undefined, { numeric: true });
-  });
+  const boothSort = (a, b) => (a['Booth'] || '').localeCompare(b['Booth'] || '', undefined, { numeric: true });
+  allData.tier1 = r1.sort(boothSort);
+  allData.tier2 = r2.sort(boothSort);
+  allData.accessories = r3.sort(boothSort);
 
   // Load visited state
   try {
-    const saved = localStorage.getItem('lp_visited');
+    const saved = localStorage.getItem('lp_visited_v2');
     if (saved) visited = JSON.parse(saved);
+    // Ensure all sections exist
+    if (!visited.tier1) visited.tier1 = {};
+    if (!visited.tier2) visited.tier2 = {};
+    if (!visited.accessories) visited.accessories = {};
   } catch(e) {}
 
-  // Open IndexedDB
   db = await openDB();
-
+  updateNavCounts();
   renderList();
 }
 
 function saveVisited() {
-  localStorage.setItem('lp_visited', JSON.stringify(visited));
+  localStorage.setItem('lp_visited_v2', JSON.stringify(visited));
 }
+
+function currentItems() { return allData[activeSection]; }
+function currentVisited() { return visited[activeSection]; }
 
 // ─── IndexedDB ───
 function openDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('LineaPelleRecordings', 1);
+    const req = indexedDB.open('LineaPelleRecordings', 2);
     req.onupgradeneeded = e => {
       const db = e.target.result;
       if (!db.objectStoreNames.contains('recordings')) {
@@ -334,6 +379,31 @@ function dbDelete(id) {
   });
 }
 
+// Composite key for recordings: "tier1_5", "accessories_12"
+function recKey(item) { return activeSection + '_' + item.id; }
+
+// ─── Sections (bottom nav) ───
+function switchSection(section) {
+  activeSection = section;
+  activeTab = 'upcoming';
+  document.getElementById('tabUpcoming').classList.add('active');
+  document.getElementById('tabVisited').classList.remove('active');
+  document.getElementById('searchInput').value = '';
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navId = section === 'tier1' ? 'navTier1' : section === 'tier2' ? 'navTier2' : 'navAccessories';
+  document.getElementById(navId).classList.add('active');
+
+  document.getElementById('listContainer').scrollTop = 0;
+  renderList();
+}
+
+function updateNavCounts() {
+  document.getElementById('navCount1').textContent = allData.tier1.length;
+  document.getElementById('navCount2').textContent = allData.tier2.length;
+  document.getElementById('navCountAcc').textContent = allData.accessories.length;
+}
+
 // ─── Tabs ───
 function switchTab(tab) {
   activeTab = tab;
@@ -358,9 +428,11 @@ function renderList() {
   const search = document.getElementById('searchInput').value.toLowerCase().trim();
   const listEl = document.getElementById('list');
   const isVisited = activeTab === 'visited';
+  const items = currentItems();
+  const vis = currentVisited();
 
-  let items = tanneries.filter(t => {
-    const isV = visited[t.id] !== undefined;
+  let filtered = items.filter(t => {
+    const isV = vis[t.id] !== undefined;
     if (isVisited !== isV) return false;
     if (search) {
       const name = (t['Company Name'] || '').toLowerCase();
@@ -372,24 +444,25 @@ function renderList() {
   });
 
   if (isVisited) {
-    items.sort((a, b) => (visited[b.id] || 0) - (visited[a.id] || 0));
+    filtered.sort((a, b) => (vis[b.id] || 0) - (vis[a.id] || 0));
   }
 
-  // Update counts
-  const visitedCount = tanneries.filter(t => visited[t.id] !== undefined).length;
-  document.getElementById('countUpcoming').textContent = `(${tanneries.length - visitedCount})`;
+  // Update tab counts
+  const visitedCount = items.filter(t => vis[t.id] !== undefined).length;
+  document.getElementById('countUpcoming').textContent = `(${items.length - visitedCount})`;
   document.getElementById('countVisited').textContent = `(${visitedCount})`;
 
-  if (items.length === 0) {
+  if (filtered.length === 0) {
+    const label = activeSection === 'accessories' ? 'exhibitors' : 'tanneries';
     listEl.innerHTML = `<div class="empty-state">${isVisited
-      ? 'No tanneries visited yet.<br>Swipe right on a card to mark as visited.'
-      : search ? 'No matches found.' : 'All tanneries visited! 🎉'
+      ? `No ${label} visited yet.<br>Swipe right on a card to mark as visited.`
+      : search ? 'No matches found.' : `All ${label} visited! 🎉`
     }</div>`;
     return;
   }
 
   listEl.innerHTML = '';
-  items.forEach(t => {
+  filtered.forEach(t => {
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.id = t.id;
@@ -429,7 +502,7 @@ function esc(s) {
 }
 
 // ─── Swipe ───
-function setupSwipe(card, tanneryId, isVisitedTab) {
+function setupSwipe(card, itemId, isVisitedTab) {
   let startX = 0, startY = 0, dx = 0, swiping = false, locked = false;
   const threshold = 80;
 
@@ -447,7 +520,6 @@ function setupSwipe(card, tanneryId, isVisitedTab) {
     const deltaX = cx - startX;
     const deltaY = cy - startY;
 
-    // Lock direction after initial movement
     if (!swiping && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) return;
     if (!swiping) {
       if (Math.abs(deltaY) > Math.abs(deltaX)) { locked = true; return; }
@@ -455,7 +527,6 @@ function setupSwipe(card, tanneryId, isVisitedTab) {
       card.classList.add('swiping');
     }
 
-    // On Upcoming tab: only allow right swipe. On Visited tab: only allow left swipe.
     if (!isVisitedTab && deltaX < 0) { dx = 0; card.style.transform = ''; return; }
     if (isVisitedTab && deltaX > 0) { dx = 0; card.style.transform = ''; return; }
 
@@ -481,10 +552,11 @@ function setupSwipe(card, tanneryId, isVisitedTab) {
       card.style.opacity = '0';
 
       setTimeout(() => {
+        const vis = currentVisited();
         if (isVisitedTab) {
-          delete visited[tanneryId];
+          delete vis[itemId];
         } else {
-          visited[tanneryId] = Date.now();
+          vis[itemId] = Date.now();
         }
         saveVisited();
         renderList();
@@ -500,42 +572,42 @@ function setupSwipe(card, tanneryId, isVisitedTab) {
 }
 
 // ─── Detail View ───
-async function openDetail(tannery) {
-  currentTannery = tannery;
+async function openDetail(item) {
+  currentTannery = item;
   const view = document.getElementById('detailView');
   const content = document.getElementById('detailContent');
 
-  const specialTags = getSpecialTags(tannery['Tags']);
+  const specialTags = getSpecialTags(item['Tags']);
   const pills = specialTags.map(s => `<span class="tag-pill ${s.key}">${s.label}</span>`).join('');
 
   let html = `
-    <div class="detail-name">${esc(tannery['Company Name'])}</div>
-    <div class="detail-booth">${esc(tannery['Booth'])}</div>
+    <div class="detail-name">${esc(item['Company Name'])}</div>
+    <div class="detail-booth">${esc(item['Booth'])}</div>
     ${pills ? `<div class="detail-tags">${pills}</div>` : ''}
   `;
 
-  // Basic Info
+  // Basic Info (shared across all sections)
   const basicFields = [];
-  addField(basicFields, 'Country', tannery['Country']);
-  if (tannery['Website']) {
-    const url = tannery['Website'].startsWith('http') ? tannery['Website'] : 'https://' + tannery['Website'];
-    basicFields.push({ label: 'Website', value: `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(tannery['Website'])}</a>` });
+  addField(basicFields, 'Country', item['Country']);
+  if (item['Website']) {
+    const url = item['Website'].startsWith('http') ? item['Website'] : 'https://' + item['Website'];
+    basicFields.push({ label: 'Website', value: `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(item['Website'])}</a>` });
   }
-  if (tannery['Email']) {
-    basicFields.push({ label: 'Email', value: `<a href="mailto:${esc(tannery['Email'])}">${esc(tannery['Email'])}</a>` });
+  if (item['Email']) {
+    basicFields.push({ label: 'Email', value: `<a href="mailto:${esc(item['Email'])}">${esc(item['Email'])}</a>` });
   }
-  if (tannery['Phone']) {
-    basicFields.push({ label: 'Phone', value: `<a href="tel:${esc(tannery['Phone'])}">${esc(tannery['Phone'])}</a>` });
+  if (item['Phone']) {
+    basicFields.push({ label: 'Phone', value: `<a href="tel:${esc(item['Phone'])}">${esc(item['Phone'])}</a>` });
   }
   if (basicFields.length) html += renderSection('Basic Info', basicFields);
 
   // Classification
   const classFields = [];
-  addField(classFields, 'Sector', tannery['Sector']);
-  addField(classFields, 'Typology', tannery['Typology']);
-  addField(classFields, 'Priority Score', tannery['Priority Score']);
-  if (tannery['Tags']) {
-    classFields.push({ label: 'Tags', value: tannery['Tags'].split(',').map(t => {
+  addField(classFields, 'Sector', item['Sector']);
+  addField(classFields, 'Typology', item['Typology']);
+  addField(classFields, 'Priority Score', item['Priority Score']);
+  if (item['Tags']) {
+    classFields.push({ label: 'Tags', value: item['Tags'].split(',').map(t => {
       const tag = t.trim();
       const special = getSpecialTags(tag);
       const cls = special.length ? special[0].key : '';
@@ -544,41 +616,53 @@ async function openDetail(tannery) {
   }
   if (classFields.length) html += renderSection('Classification', classFields);
 
-  // Products & Materials
-  const prodFields = [];
-  addField(prodFields, 'Hide Types', tannery['Hide Types']);
-  addField(prodFields, 'Tanning Methods', tannery['Tanning Methods']);
-  addField(prodFields, 'Thickness Range', tannery['Thickness Range']);
-  addField(prodFields, 'Finishes (Catalog)', tannery['Finishes (Catalog)']);
-  addField(prodFields, 'Interesting Finishes', tannery['Interesting Finishes']);
-  addField(prodFields, 'Exotic Hides', tannery['Exotic Hides']);
-  addField(prodFields, 'Novel Materials', tannery['Novel Materials']);
-  addField(prodFields, 'Transparent Leather', tannery['Transparent Leather']);
-  addField(prodFields, 'Combined Materials', tannery['Combined Materials']);
-  if (prodFields.length) html += renderSection('Products & Materials', prodFields);
+  if (activeSection === 'accessories') {
+    // Accessories-specific fields
+    const prodFields = [];
+    addField(prodFields, 'Product Types', item['Product Types']);
+    addField(prodFields, 'Hardware Types', item['Hardware Types']);
+    addField(prodFields, 'Materials', item['Materials']);
+    addField(prodFields, 'Product Description', item['Product Description']);
+    if (prodFields.length) html += renderSection('Products', prodFields);
 
-  // Business
-  const bizFields = [];
-  addField(bizFields, 'MOQ Info', tannery['MOQ Info']);
-  addField(bizFields, 'Custom Work', tannery['Custom Work']);
-  addField(bizFields, 'Ethical / Sustainability', tannery['Ethical/Sustainability']);
-  addField(bizFields, 'Destinations', tannery['Destinations']);
-  if (bizFields.length) html += renderSection('Business', bizFields);
+    const bizFields = [];
+    addField(bizFields, 'MOQ Info', item['MOQ Info']);
+    addField(bizFields, 'Custom Work', item['Custom Work']);
+    if (bizFields.length) html += renderSection('Business', bizFields);
+  } else {
+    // Tannery-specific fields (Tier 1 & Tier 2)
+    const prodFields = [];
+    addField(prodFields, 'Hide Types', item['Hide Types']);
+    addField(prodFields, 'Tanning Methods', item['Tanning Methods']);
+    addField(prodFields, 'Thickness Range', item['Thickness Range']);
+    addField(prodFields, 'Finishes (Catalog)', item['Finishes (Catalog)']);
+    addField(prodFields, 'Interesting Finishes', item['Interesting Finishes']);
+    addField(prodFields, 'Exotic Hides', item['Exotic Hides']);
+    addField(prodFields, 'Novel Materials', item['Novel Materials']);
+    addField(prodFields, 'Transparent Leather', item['Transparent Leather']);
+    addField(prodFields, 'Combined Materials', item['Combined Materials']);
+    if (prodFields.length) html += renderSection('Products & Materials', prodFields);
 
-  // Summary
+    const bizFields = [];
+    addField(bizFields, 'MOQ Info', item['MOQ Info']);
+    addField(bizFields, 'Custom Work', item['Custom Work']);
+    addField(bizFields, 'Ethical / Sustainability', item['Ethical/Sustainability']);
+    addField(bizFields, 'Destinations', item['Destinations']);
+    if (bizFields.length) html += renderSection('Business', bizFields);
+  }
+
+  // Summary (shared)
   const sumFields = [];
-  addField(sumFields, 'Distinctive Summary', tannery['Distinctive Summary']);
-  addField(sumFields, 'Notes', tannery['Notes']);
+  addField(sumFields, 'Distinctive Summary', item['Distinctive Summary']);
+  addField(sumFields, 'Notes', item['Notes']);
   if (sumFields.length) html += renderSection('Summary', sumFields);
 
-  // Voice Memos section placeholder
   html += `<div class="section"><div class="section-title">Voice Memos</div><div id="memosList"></div></div>`;
 
   content.innerHTML = html;
   view.classList.add('open');
   view.scrollTop = 0;
 
-  // Load recordings
   await loadRecordings();
 }
 
@@ -603,7 +687,8 @@ function closeDetail() {
 // ─── Recordings ───
 async function loadRecordings() {
   if (!currentTannery || !db) return;
-  const recs = await dbGetByTannery(currentTannery.id);
+  const key = recKey(currentTannery);
+  const recs = await dbGetByTannery(key);
   recs.sort((a, b) => b.timestamp - a.timestamp);
   const el = document.getElementById('memosList');
   if (!recs.length) {
@@ -699,7 +784,6 @@ async function startRecordingSession() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordingChunks = [];
 
-    // Use webm if available, fallback to whatever the browser supports
     const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
       ? 'audio/webm;codecs=opus'
       : MediaRecorder.isTypeSupported('audio/webm')
@@ -722,7 +806,7 @@ async function startRecordingSession() {
       const filename = `${slug}_${ts}.${ext}`;
 
       await dbAdd({
-        tanneryId: currentTannery.id,
+        tanneryId: recKey(currentTannery),
         filename,
         timestamp: Date.now(),
         duration,
@@ -737,7 +821,6 @@ async function startRecordingSession() {
     isRecording = true;
     updateRecordingUI();
 
-    // Timer
     recordingTimer = setInterval(() => {
       const elapsed = Date.now() - recordingStart;
       document.getElementById('recTimer').textContent = formatDuration(elapsed);
@@ -795,15 +878,18 @@ async function exportAllRecordings() {
     return;
   }
 
-  // Build a ZIP manually using a minimal approach
-  // Since we can't use JSZip offline without bundling, let's download individual files
-  // Actually, let's build a simple ZIP
+  const allItems = [...allData.tier1, ...allData.tier2, ...allData.accessories];
   const files = [];
   for (const r of recs) {
-    const tannery = tanneries.find(t => t.id === r.tanneryId);
-    const folder = tannery ? slugify(tannery['Company Name']) : 'unknown';
+    // tanneryId is like "tier1_5" — find the matching item
+    const parts = r.tanneryId.split('_');
+    const section = parts[0] === 'accessories' ? 'accessories' : parts[0];
+    const id = parseInt(parts.slice(section === 'accessories' ? 1 : 1).join('_'));
+    const sectionData = allData[section] || [];
+    const item = sectionData.find(t => t.id === id);
+    const folder = item ? slugify(item['Company Name']) : 'unknown';
     const arrayBuf = await r.blob.arrayBuffer();
-    files.push({ name: `${folder}/${r.filename}`, data: new Uint8Array(arrayBuf) });
+    files.push({ name: `${section}/${folder}/${r.filename}`, data: new Uint8Array(arrayBuf) });
   }
 
   const zipBlob = createZip(files);
@@ -828,25 +914,23 @@ function createZip(files) {
     const data = file.data;
     const crc = crc32(data);
 
-    // Local file header
     const local = new Uint8Array(30 + nameBytes.length + data.length);
     const lv = new DataView(local.buffer);
-    lv.setUint32(0, 0x04034b50, true);   // signature
-    lv.setUint16(4, 20, true);            // version needed
-    lv.setUint16(6, 0, true);             // flags
-    lv.setUint16(8, 0, true);             // compression (store)
-    lv.setUint16(10, 0, true);            // mod time
-    lv.setUint16(12, 0, true);            // mod date
-    lv.setUint32(14, crc, true);          // crc32
-    lv.setUint32(18, data.length, true);  // compressed size
-    lv.setUint32(22, data.length, true);  // uncompressed size
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint16(10, 0, true);
+    lv.setUint16(12, 0, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, data.length, true);
+    lv.setUint32(22, data.length, true);
     lv.setUint16(26, nameBytes.length, true);
-    lv.setUint16(28, 0, true);            // extra field length
+    lv.setUint16(28, 0, true);
     local.set(nameBytes, 30);
     local.set(data, 30 + nameBytes.length);
     localHeaders.push(local);
 
-    // Central directory header
     const central = new Uint8Array(46 + nameBytes.length);
     const cv = new DataView(central.buffer);
     cv.setUint32(0, 0x02014b50, true);
@@ -874,7 +958,6 @@ function createZip(files) {
 
   const centralSize = centralHeaders.reduce((a, b) => a + b.length, 0);
 
-  // End of central directory
   const end = new Uint8Array(22);
   const ev = new DataView(end.buffer);
   ev.setUint32(0, 0x06054b50, true);

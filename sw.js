@@ -1,8 +1,10 @@
-const CACHE_NAME = 'lineapelle-v1';
+const CACHE_NAME = 'lineapelle-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/tanneries.json',
+  '/tier2.json',
+  '/accessories.json',
   '/manifest.json',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
