@@ -213,6 +213,9 @@ html,body{
 .detail-booth{font-size:14px;color:var(--fg2);margin-bottom:12px}
 .detail-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
 
+.detail-row{display:flex;gap:12px}
+.detail-row .section{flex:1;min-width:0}
+
 .section{margin-bottom:20px}
 .section-title{
   font-size:12px;font-weight:700;text-transform:uppercase;
@@ -797,7 +800,7 @@ async function openDetail(item) {
     ${pills ? `<div class="detail-tags">${pills}</div>` : ''}
   `;
 
-  // Basic Info
+  // Basic Info + Classification side by side
   const basicFields = [];
   addField(basicFields, 'Country', item['Country']);
   if (item['Website']) {
@@ -806,9 +809,7 @@ async function openDetail(item) {
   }
   if (item['Email']) basicFields.push({ label: 'Email', value: `<a href="mailto:${esc(item['Email'])}">${esc(item['Email'])}</a>` });
   if (item['Phone']) basicFields.push({ label: 'Phone', value: `<a href="tel:${esc(item['Phone'])}">${esc(item['Phone'])}</a>` });
-  if (basicFields.length) html += renderSection('Basic Info', basicFields);
 
-  // Classification
   const classFields = [];
   addField(classFields, 'Sector', item['Sector']);
   addField(classFields, 'Typology', item['Typology']);
@@ -821,7 +822,13 @@ async function openDetail(item) {
       return `<span class="tag-pill ${cls}" style="${cls ? '' : 'background:var(--bg3);color:var(--fg2)'}">${tag.replace(/_/g, ' ')}</span>`;
     }).join(' ') });
   }
-  if (classFields.length) html += renderSection('Classification', classFields);
+
+  if (basicFields.length || classFields.length) {
+    html += '<div class="detail-row">';
+    if (basicFields.length) html += renderSection('Basic Info', basicFields);
+    if (classFields.length) html += renderSection('Classification', classFields);
+    html += '</div>';
+  }
 
   // Summary — right after classification
   const sumFields = [];
@@ -921,7 +928,7 @@ async function loadRecordings() {
   if (!currentTannery || !db) return;
   const key = recKey(currentTannery);
   const recs = await dbGetByTannery(key);
-  recs.sort((a, b) => b.timestamp - a.timestamp);
+  recs.sort((a, b) => a.timestamp - b.timestamp);
   const el = document.getElementById('memosList');
   if (!recs.length) {
     el.innerHTML = '<div style="color:var(--fg3);font-size:13px">No recordings yet. Tap Rec to start.</div>';
