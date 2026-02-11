@@ -123,7 +123,11 @@ html,body{
   position:relative;overflow:hidden;
   transition:transform .3s ease,opacity .3s ease;
   cursor:pointer;user-select:none;-webkit-user-select:none;
-  border-left:5px solid transparent;
+}
+.card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:5px;
+  border-radius:12px 0 0 12px;
+  background:var(--card-border,transparent);
 }
 .card.swiping{transition:none}
 .card.removing{pointer-events:none}
@@ -502,16 +506,15 @@ function getSpecialTags(tags) {
 
 function cardBorderStyle(tags) {
   const special = getSpecialTags(tags);
-  if (special.length === 0) return 'border-left-color:transparent';
-  if (special.length === 1) return `border-left-color:${special[0].color}`;
-  // Gradient for multiple tags
+  if (special.length === 0) return '';
+  if (special.length === 1) return `--card-border:${special[0].color}`;
   const colors = special.map(s => s.color);
   const stops = colors.map((c, i) => {
     const start = (i / colors.length * 100).toFixed(0);
     const end = ((i + 1) / colors.length * 100).toFixed(0);
     return `${c} ${start}%, ${c} ${end}%`;
   }).join(', ');
-  return `border-image:linear-gradient(to bottom, ${stops}) 1`;
+  return `--card-border:linear-gradient(to bottom, ${stops})`;
 }
 
 // ─── Render List ───
