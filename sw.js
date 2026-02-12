@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lineapelle-v4';
+const CACHE_NAME = 'lineapelle-v5';
 const BASE = '/lineapelle/';
 const ASSETS = [
   BASE,
